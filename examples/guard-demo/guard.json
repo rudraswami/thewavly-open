@@ -1,0 +1,14 @@
+{
+  "tools": {
+    "place_order": {
+      "resolve": { "tool": "view_cart", "arguments": { "cart_id": "args.cart_id" } },
+      "purchase": {
+        "item": { "const": "Food order" },
+        "amount_rupees": "resolved.total_rupees",
+        "merchant": "resolved.store",
+        "payee": "resolved.upi_id"
+      },
+      "reference": "result.order_id"
+    }
+  }
+}

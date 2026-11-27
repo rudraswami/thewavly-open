@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "thewavly"
+version = "0.2.0"
+description = "Check every AI agent purchase against what the user approved, before the money moves."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "Apache-2.0" }
+dependencies = []
+classifiers = ["Programming Language :: Python :: 3", "Topic :: Office/Business :: Financial"]
+
+[project.optional-dependencies]
+verify = ["cryptography>=41"]
+
+[project.urls]
+Homepage = "https://thewavly.com"
+Documentation = "https://thewavly.com/developers"
+Source = "https://github.com/rudraswami/thewavly-open"
+
+[tool.setuptools]
+packages = ["thewavly"]

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.rudraswami/wavly",
+  "description": "Check an AI agent’s purchase against the user’s approval before it pays.",
+  "repository": {
+    "url": "https://github.com/rudraswami/thewavly-open",
+    "source": "github"
+  },
+  "version": "0.2.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@thewavly/mcp",
+      "version": "0.2.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "WAVLY_API_KEY",
+          "description": "Your TheWavly secret key. A test key (sk_test_…) is free.",
+          "isRequired": true,
+          "isSecret": true,
+          "format": "string"
+        },
+        {
+          "name": "WAVLY_BASE_URL",
+          "description": "Another TheWavly deployment, if you are not using the hosted service.",
+          "isRequired": false,
+          "isSecret": false,
+          "format": "string"
+        }
+      ]
+    }
+  ]
+}

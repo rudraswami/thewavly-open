@@ -1,0 +1,32 @@
+{
+  "name": "@thewavly/guard",
+  "version": "0.2.0",
+  "description": "Make the TheWavly check impossible to skip: hold an MCP server's order and payment tools until TheWavly answers.",
+  "type": "module",
+  "main": "guard.mjs",
+  "exports": {
+    ".": "./guard.mjs"
+  },
+  "bin": {
+    "wavly-guard": "cli.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rudraswami/thewavly-open.git",
+    "directory": "sdk/guard"
+  },
+  "homepage": "https://thewavly.com",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "guard.mjs",
+    "cli.mjs",
+    "wavly-client.mjs",
+    "README.md"
+  ]
+}

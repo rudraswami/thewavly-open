@@ -1,0 +1,14 @@
+{
+  "name": "wavly-framework-examples",
+  "private": true,
+  "type": "module",
+  "description": "TheWavly Guard around a payment tool in the Vercel AI SDK, LangChain.js and the OpenAI Agents SDK",
+  "scripts": { "check": "node check.mjs" },
+  "dependencies": {
+    "@langchain/core": "1.5.0",
+    "@openai/agents": "0.22.0",
+    "@thewavly/guard": "file:../../sdk/guard",
+    "ai": "7.0.179",
+    "zod": "4.6.7"
+  }
+}

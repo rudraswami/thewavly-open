@@ -1,0 +1,28 @@
+{
+  "name": "@thewavly/mcp",
+  "version": "0.2.0",
+  "description": "TheWavly as a Model Context Protocol server: agents check purchases before paying.",
+  "type": "module",
+  "bin": {
+    "wavly-mcp": "server.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "mcpName": "io.github.rudraswami/wavly",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rudraswami/thewavly-open.git",
+    "directory": "sdk/mcp"
+  },
+  "homepage": "https://thewavly.com",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "server.mjs",
+    "wavly-client.mjs",
+    "README.md"
+  ]
+}

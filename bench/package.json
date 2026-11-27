@@ -1,0 +1,13 @@
+{
+  "name": "thewavly-purchase-bench",
+  "private": true,
+  "type": "module",
+  "description": "Can an AI agent shop the way you asked? Everyday Indian purchases, checked by TheWavly.",
+  "scripts": {
+    "scripted": "node run.mjs --scripted"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.12.0"
+  },
+  "license": "Apache-2.0"
+}

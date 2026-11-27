@@ -1,0 +1,27 @@
+{
+  "name": "@thewavly/sdk",
+  "version": "0.2.0",
+  "description": "Check an AI agent's purchase against what the user approved, before it pays.",
+  "type": "module",
+  "main": "index.mjs",
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rudraswami/thewavly-open.git",
+    "directory": "sdk/js"
+  },
+  "homepage": "https://thewavly.com",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "index.mjs",
+    "README.md"
+  ]
+}

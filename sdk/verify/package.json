@@ -1,0 +1,29 @@
+{
+  "name": "@thewavly/verify",
+  "version": "0.2.0",
+  "description": "Verify a TheWavly evidence pack offline: mandate chain, receipt, findings and pack signature.",
+  "type": "module",
+  "bin": {
+    "wavly-verify": "wavly-verify.mjs"
+  },
+  "exports": {
+    ".": "./wavly-verify.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rudraswami/thewavly-open.git",
+    "directory": "sdk/verify"
+  },
+  "homepage": "https://thewavly.com",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "wavly-verify.mjs",
+    "README.md"
+  ]
+}

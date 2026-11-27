@@ -1,0 +1,31 @@
+{
+  "name": "@thewavly/merchant",
+  "version": "0.2.0",
+  "description": "Accept an AI agent's order only when TheWavly says the user approved it: verify the agent and redeem its payment token once.",
+  "type": "module",
+  "main": "merchant.mjs",
+  "exports": {
+    ".": "./merchant.mjs",
+    "./gateways": "./gateways.mjs",
+    "./checkout-store": "./checkout-store.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rudraswami/thewavly-open.git",
+    "directory": "sdk/merchant"
+  },
+  "homepage": "https://thewavly.com",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "merchant.mjs",
+    "gateways.mjs",
+    "checkout-store.mjs",
+    "README.md"
+  ]
+}

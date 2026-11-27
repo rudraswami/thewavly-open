@@ -1,0 +1,124 @@
+name: Release open packages
+on:
+  push:
+    tags: ['v*']
+
+permissions: {}
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12'
+      - name: Verify release metadata against the tag and source repository
+        run: |
+          python - <<'PY'
+          import json, os, tomllib
+          from pathlib import Path
+          def manifest(path):
+              return json.loads(Path(path).read_text())
+          version = os.environ['GITHUB_REF_NAME'].removeprefix('v')
+          repo = os.environ['GITHUB_REPOSITORY']
+          for directory, name in [('js', 'sdk'), ('mcp', 'mcp'), ('verify', 'verify')]:
+              pkg = manifest(f'sdk/{directory}/package.json')
+              assert pkg['name'] == '@thewavly/' + name and pkg['version'] == version
+              assert not pkg.get('private') and pkg['publishConfig']['access'] == 'public'
+              assert pkg['repository']['url'] == f'git+https://github.com/{repo}.git'
+          project = tomllib.loads(Path('sdk/python/pyproject.toml').read_text())['project']
+          assert (project['name'], project['version']) == ('thewavly', version)
+          server, mcp = manifest('server.json'), manifest('sdk/mcp/package.json')
+          package, = server['packages']
+          assert server['repository']['url'] == f'https://github.com/{repo}'
+          assert server['name'] == mcp['mcpName'] == f"io.github.{repo.split('/')[0]}/wavly"
+          assert server['version'] == package['version'] == version
+          assert (package['registryType'], package['identifier']) == ('npm', mcp['name'])
+          PY
+      - run: node --test tests/*.test.mjs
+      - run: python -m unittest discover -s sdk/python/tests -v
+      - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+        with:
+          go-version: "1.22"
+          cache: false
+      - run: cd sdk/go && go test ./...
+      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: "21"
+      - run: cd sdk/java && javac -d /tmp/j src/main/java/io/github/rudraswami/thewavly/Wavly.java src/test/java/io/github/rudraswami/thewavly/WavlyTest.java && java -cp /tmp/j io.github.rudraswami.thewavly.WavlyTest
+      - name: Build Python distributions
+        run: |
+          python -m pip install 'build==1.3.0'
+          python -m build sdk/python --outdir dist
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: python-dist
+          path: dist/
+          if-no-files-found: error
+  npm:
+    needs: test
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write # npm provenance
+    strategy:
+      fail-fast: false
+      matrix:
+        directory: [js, mcp, verify]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+          registry-url: https://registry.npmjs.org
+      - name: Publish npm package
+        working-directory: sdk/${{ matrix.directory }}
+        run: npm publish --provenance --access public --ignore-scripts
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  pypi:
+    needs: test
+    runs-on: ubuntu-24.04
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: python-dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # v1.13.0
+  mcp:
+    needs: npm
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Install the official publisher
+        working-directory: ${{ runner.temp }}
+        run: |
+          curl --fail --location --retry 3 --output publisher.tar.gz https://github.com/modelcontextprotocol/registry/releases/download/v1.8.16/mcp-publisher_linux_amd64.tar.gz
+          echo '6e2f799550cf843c6fd3350498d56cc49be3dc0af1e6237eb0e6435c7a9d5c05  publisher.tar.gz' | sha256sum --check
+          tar -xzf publisher.tar.gz mcp-publisher
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+      - run: mcp-publisher login github-oidc
+      - run: mcp-publisher publish
